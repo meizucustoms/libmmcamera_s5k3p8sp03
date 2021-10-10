@@ -5,6 +5,9 @@
  * All Rights Reserved.
  * Confidential and Proprietary - Qualcomm Technologies, Inc.
  */
+// 0x3ec0 or 0xc03e
+// 16064 or 49214
+
  .vendor_id = QTI,
  .stats_dt    = CSI_RAW10,
  .orientation= PDAF_ORIENTATION_DEFAULT,
@@ -16,26 +19,27 @@
      vertical pixel count == y_output / 4 */
      .block_count_horizontal = 4032,
      .block_count_vertical = 756,
+
    },
    /* Res 1 */
    {
      .block_count_horizontal = 4032,
-     .block_count_vertical = 504,
+     .block_count_vertical = 568,
    },
    /* Res 2 */
    {
-     .block_count_horizontal = 1920,
-     .block_count_vertical = 270,
+     .block_count_horizontal = 2016,
+     .block_count_vertical = 378,
    },
    /* Res 3 */
    {
-     .block_count_horizontal = 1920,
-     .block_count_vertical = 270,
+     .block_count_horizontal = 2016,
+     .block_count_vertical = 284,
    },
    /* Res 4 */
    {
-     .block_count_horizontal = 1920,
-     .block_count_vertical = 270,
+     .block_count_horizontal = 1296,
+     .block_count_vertical = 184,
    },
    /* Res 5 */
    {
@@ -45,7 +49,7 @@
    /* Res 6 */
    {
      .block_count_horizontal = 4032,
-     .block_count_vertical = 504,
+     .block_count_vertical = 568,
    },
  },
  .buffer_block_pattern_info = {
@@ -78,11 +82,11 @@
    /* Res 2 */
    {
 #if defined(MSM8952_SENSORS)
-     .stride = 1920*10/8,
+     .stride = 2016*10/8,
      .buffer_type = PDAF_BUFFER_FLAG_INTERLEAVE_CHANNEL,
      .buffer_data_type = PDAF_DATA_TYPE_RAW10_PACKED,
 #else
-     .stride = 1920*2,
+     .stride = 2016*2,
      .buffer_type = PDAF_BUFFER_FLAG_INTERLEAVE_CHANNEL,
      .buffer_data_type = PDAF_DATA_TYPE_RAW16,
 #endif
@@ -90,11 +94,11 @@
    /* Res 3 */
    {
 #if defined(MSM8952_SENSORS)
-     .stride = 1920*10/8,
+     .stride = 2016*10/8,
      .buffer_type = PDAF_BUFFER_FLAG_INTERLEAVE_CHANNEL,
      .buffer_data_type = PDAF_DATA_TYPE_RAW10_PACKED,
 #else
-     .stride = 1920*2,
+     .stride = 2016*2,
      .buffer_type = PDAF_BUFFER_FLAG_INTERLEAVE_CHANNEL,
      .buffer_data_type = PDAF_DATA_TYPE_RAW16,
 #endif
@@ -102,11 +106,11 @@
    /* Res 4 */
    {
 #if defined(MSM8952_SENSORS)
-     .stride = 1920*10/8,
+     .stride = 1296*10/8,
      .buffer_type = PDAF_BUFFER_FLAG_INTERLEAVE_CHANNEL,
      .buffer_data_type = PDAF_DATA_TYPE_RAW10_PACKED,
 #else
-     .stride = 1920*2,
+     .stride = 1296*2,
      .buffer_type = PDAF_BUFFER_FLAG_INTERLEAVE_CHANNEL,
      .buffer_data_type = PDAF_DATA_TYPE_RAW16,
 #endif
