@@ -1,6 +1,6 @@
 /*==========================================================
 
-  Copyright (c) 2014-2019 Qualcomm Technologies, Inc. All Rights Reserved.
+  Copyright (c) 2014-2016 Qualcomm Technologies, Inc. All Rights Reserved.
   Qualcomm Technologies Proprietary and Confidential.
 
 ===========================================================*/
@@ -30,10 +30,9 @@
 #define MAX_RESOLUTION_MODES 14
 #define MAX_DPC_COORD       512
 
-#define MAX_AF_SYNC_POINTS 20
 
 #define EEPROM_MEMORY_MAP_MAX_SIZE  80
-#define EEPROM_MAX_MEM_MAP_CNT      9
+#define EEPROM_MAX_MEM_MAP_CNT      8
 
 /*
  * EEPROM driver version is given by:
@@ -175,10 +174,6 @@ typedef struct {
  * relative_principle_point_y_offset = Relative offset of sensor center from optical axis along vertical dimension
  * relative_position_flag = 0=Main Camera is on the left of Aux; 1=Main Camera is on the right of Aux
  * relative_baseline_distance = Camera separation in mm
- * af_sync_calib_version dual af sync calibration version
- * nums_of_af_sync_point the number of af sync calibration points
- * dist_of_af_sync_point array of the distance of the different af sync calibration position cm
- * dac_of_af_sync_point array of the dac of the different af sync calibration position
  */
 typedef struct {
   unsigned int     calibration_format_version;
@@ -193,17 +188,11 @@ typedef struct {
   unsigned short   module_orientation_flag;
   unsigned short   rotation_flag;
   unsigned short   brightness_ratio;
-  unsigned short   ref_aux_gain;;
-  unsigned short   ref_aux_linecount;
-  unsigned short   ref_master_gain;
-  unsigned short   ref_master_linecount;
-  unsigned short   ref_master_color_temperature;
-  unsigned short   af_sync_calib_version;
-  unsigned short   nums_of_af_sync_point;
-  unsigned short   dist_of_af_sync_point[MAX_AF_SYNC_POINTS];
-  short            dac_of_af_sync_point[MAX_AF_SYNC_POINTS];
-  void             *dc_otp_params;
-  int              dc_otp_size; /* in bytes */
+  unsigned short   ref_mono_gain;;
+  unsigned short   ref_mono_linecount;
+  unsigned short   ref_bayer_gain;
+  unsigned short   ref_bayer_linecount;
+  unsigned short   ref_bayer_color_temperature;
 } dc_sensor_system_calib_data_t;
 
 /**
@@ -247,7 +236,7 @@ typedef struct {
   eeprom_calib_items_t            items;
 
   /* based on property setting
-   * ("persist.vendor.camera.cal.awb", "...lsc", "...dp" and "...af")
+   * ("persist.camera.cal.awb", "...lsc", "...dp" and "...af")
    * indicate which items should do the calibration */
   eeprom_calib_items_t    items_for_cal;
 

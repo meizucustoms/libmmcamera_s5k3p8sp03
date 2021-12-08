@@ -9,5 +9,6 @@ LOCAL_C_INCLUDES       += s5k3p8sp03_lib.h
 LOCAL_SRC_FILES        := s5k3p8sp03_lib.c
 LOCAL_MODULE           := libmmcamera_s5k3p8sp03
 LOCAL_SHARED_LIBRARIES := libcutils
+LOCAL_STRIP_MODULE     := false
 
 include $(BUILD_SHARED_LIBRARY)

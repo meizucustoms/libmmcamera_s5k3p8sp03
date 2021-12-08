@@ -65,21 +65,15 @@ typedef struct
   unsigned short            cur_logical_lens_pos;
   /*reserved*/
   void                      *p_tunnable;
-  unsigned char             *p_pdaf_input;
 } pdaf_param_t;
 
 /* output for defocus */
 typedef struct
 {
   pdaf_lib_defocus_t defocus[MAX_PDAF_WINDOW];
-  unsigned short is_peripheral_valid;
-  pdaf_lib_defocus_t result_peripheral[MAX_PERIPHERAL_WINDOW];
-  unsigned short is_single_valid;
-  pdaf_lib_defocus_t result_single[MAX_SINGLE_WINDOWS];
   /* number of grids, output data arranged in grid row sequence*/
   /* for floating window, output data arranged in defining order*/
   int               window_number;
-  pdaf_processing_result_t   processing_result;
 } pdaf_output_data_t;
 
 /*return lib version*/
@@ -90,9 +84,8 @@ PD_HANDLE PDAF_PhaseDetection_init(pdaf_init_param_t *p_init_param);
 
 /*processing function, call per frame*/
 PDAF_RET_t PDAF_PhaseDetection(PD_HANDLE handle,
-    pdaf_param_t *p_param,
-    unsigned short num_of_lines,
-    pdaf_output_data_t *p_result);
+                               pdaf_param_t *p_param,
+                               pdaf_output_data_t *p_result);
 
 /*deinit, call per camera session*/
 PDAF_RET_t PDAF_PhaseDetection_deinit(PD_HANDLE handle);

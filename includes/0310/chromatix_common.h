@@ -14,9 +14,7 @@
 //                      CONSTANTS
 //=============================================================================
 
-#define CHROMATIX_VFE_COMMON_VERSION    0x310
-
-#define CHROMATIX_REVISION_COMMON       0   // Must match chromatix_version_info.revision_number in header data file
+#define CHROMATIX_VFE_COMMON_VERSION 0x310
 
 #define NUM_BLK_REGIONS 6
 //=============================================================================

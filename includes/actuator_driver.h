@@ -1,6 +1,6 @@
 /*==========================================================
 
-  Copyright (c) 2014-2015, 2017 Qualcomm Technologies, Inc. All Rights Reserved.
+  Copyright (c) 2014-2015 Qualcomm Technologies, Inc. All Rights Reserved.
   Qualcomm Technologies Proprietary and Confidential.
 
 ===========================================================*/
@@ -134,7 +134,6 @@ typedef struct _actuator_tuned_params {
  * @reg_tbl: actuator table info
  * @init_settings: Initial register settings
  * @init_setting_size: initial tabel size
- * @power_on_delay: usec delay after power on
  **/
 typedef struct _actuator_params {
   char module_name[NAME_SIZE_MAX];
@@ -150,7 +149,6 @@ typedef struct _actuator_params {
   struct actuator_reg_settings_t init_settings[MAX_ACTUATOR_INIT_SET];
   unsigned short deinit_setting_size;
   struct actuator_reg_settings_t deinit_settings[MAX_ACTUATOR_INIT_SET];
-  unsigned int power_on_delay;
 } actuator_params_t;
 
 /**

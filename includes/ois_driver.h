@@ -1,5 +1,5 @@
 /*==========================================================
- Copyright (c) 2015-2017 Qualcomm Technologies, Inc.
+ Copyright (c) 2015-2016 Qualcomm Technologies, Inc.
  All Rights Reserved.
  Confidential and Proprietary - Qualcomm Technologies, Inc.
  ===========================================================*/
@@ -12,7 +12,7 @@
  * OIS driver version is given by:
  * <Major version>.<Minor version>.<Patch version>
  */
-#define OIS_DRIVER_VERSION "1.2.1"
+#define OIS_DRIVER_VERSION "1.1.0"
 #define OIS_SDK_CAPABILITIES "ENABLE OIS, DISABLE OIS, \
 MOVIE MODE, STILL MODE, CENTERING ON, CENTERING ON, \
 PAN TILT, SCENE SET, SCENE FILTER, SCENE RANGE"
@@ -25,7 +25,6 @@ enum ois_i2c_operation
 {
   OIS_WRITE,
   OIS_POLL,
-  OIS_READ,
 };
 
 typedef struct ois_opcode {
@@ -45,11 +44,6 @@ typedef struct _ois_reg_settings
   unsigned int delay;
 } ois_reg_settings_t;
 
-typedef struct ois_read_data {
-  unsigned int *ois_data;
-  unsigned int size;
-} ois_read_data_t;
-
 /**
  * _ois_params:
  * @module_name: Module name
@@ -65,8 +59,6 @@ typedef struct ois_read_data {
  * centering_on_ois_setting_size - centering on register settings
  * centering_off_ois_setting_size - centering off register settings
  * pantilt_on_ois_settings - pan tilt register settings
- * ois_read_setting_size - ois read register settings size
- * ois_read_settings - ois read register settings
  **/
 typedef struct _ois_params
 {
@@ -102,8 +94,6 @@ typedef struct _ois_params
   ois_reg_settings_t scene_range_on_settings[MAX_OIS_REG_SETTINGS];
   unsigned int scene_range_off_setting_size;
   ois_reg_settings_t scene_range_off_settings[MAX_OIS_REG_SETTINGS];
-  unsigned int ois_read_setting_size;
-  ois_reg_settings_t ois_read_settings[MAX_OIS_REG_SETTINGS];
 } ois_params_t;
 
 /**

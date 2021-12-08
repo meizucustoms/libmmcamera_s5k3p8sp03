@@ -9,23 +9,11 @@
 
 #include "chromatix.h"
 
-//=============================================================================
-//                      CONSTANTS
-//=============================================================================
-
-#define CHROMATIX_REVISION_CPP          1   // Must match chromatix_version_info.revision_number in header data file
-
 #define HW_WAVELET_LEVELS               6
 #define HW_WNR_BILATERAL_FILTER_LEVELS  4
 
 #define UP_SCALING_LEVELS               4
 #define DOWN_SCALING_LEVELS             4 // zoom
-
-#define EXT_CPP_ENTRIES                 1380
-
-//=============================================================================
-// DATA TYPES
-//=============================================================================
 
 typedef enum
 {
@@ -712,9 +700,6 @@ typedef struct
     float                                   up_scale_threshold;
     float                                   down_scale_threshold;
     Chromatix_hardware_wavelet_type         chromatix_hw_denoise_data_lpm;
-
-    // 0x310 Updates
-    float                                   ext_data[EXT_CPP_ENTRIES];
 } chromatix_cpp_type;
 
 #endif  // #ifndef CHROMATIX_CPP_H

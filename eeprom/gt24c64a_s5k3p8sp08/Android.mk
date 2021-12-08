@@ -11,13 +11,13 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../includes/
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../includes/0309
 
-LOCAL_HEADER_LIBRARIES := libutils_headers
-LOCAL_SRC_FILES        := gt24c64a_s5k3p8sp08_eeprom.c
-LOCAL_MODULE           := libmmcamera_gt24c64a_s5k3p8sp08_eeprom
-LOCAL_SHARED_LIBRARIES := liblog libcutils libmmcamera_eeprom_util
-
-LOCAL_MODULE_OWNER := qti
+LOCAL_HEADER_LIBRARIES   := libutils_headers
+LOCAL_SRC_FILES          := gt24c64a_s5k3p8sp08_eeprom.c
+LOCAL_MODULE             := libmmcamera_gt24c64a_s5k3p8sp08_eeprom
+LOCAL_SHARED_LIBRARIES   := liblog libcutils libmmcamera_eeprom_util
+LOCAL_STRIP_MODULE       := false
+LOCAL_MODULE_OWNER       := qti
+LOCAL_32_BIT_ONLY        := true
 LOCAL_PROPRIETARY_MODULE := true
-LOCAL_32_BIT_ONLY := true
 
 include $(BUILD_SHARED_LIBRARY)

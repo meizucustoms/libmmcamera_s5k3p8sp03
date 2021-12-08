@@ -1,5 +1,5 @@
 /*======================================================================
-    Copyright (c) 2015-2017 Qualcomm Technologies, Inc.
+    Copyright (c) 2015-2016 Qualcomm Technologies, Inc.
     All Rights Reserved.
     Confidential and Proprietary - Qualcomm Technologies, Inc.
 =======================================================================*/
@@ -19,7 +19,6 @@
 #define MAXLENGTH2D            MAXWIDTH * MAXHEIGHT
 #define MAXLENGTH1D            256
 #define MAX_RESOLUTION_MODES   14
-#define MAX_SINGLE_WINDOWS      1
 
 #define PDAF_2PD_SIGN          (-1)
 
@@ -33,35 +32,10 @@
                              1D, 2D pdaf calibration, touch PDAF, 2PD,data-driven,\
                              actuator_sensitivity, logical_lens pos support"
 
-
-// This has been cut from pdaf_api.h
-typedef enum _pdaf_processing_result_t {
-  PDAF_RESULT_PARTIAL,
-  PDAF_RESULT_DONE,
-}pdaf_processing_result_t;
-
 /*pd lib handle*/
 typedef void * PD_HANDLE;
 /*camif lib handle*/
 typedef void * PD_CAMIF_HANDLE;
-
-typedef enum _pdaf_peripheral_window_t {
-    TOP_LEFT_WINDOW = 0,
-    TOP_CENTER_WINDOW,
-    TOP_RIGHT_WINDOW,
-    LEFT_WINDOW,
-    RIGHT_WINDOW,
-    BOTTOM_LEFT_WINDOW,
-    BOTTOM_CENTER_WINDOW,
-    BOTTOM_RIGHT_WINDOW,
-    MAX_PERIPHERAL_WINDOW,
-} pdaf_peripheral_window_t;
-
-typedef enum _pdaf_window_type_t {
-    CENTER_WINDOW = 0,
-    PERIPHERAL_WINDOW,
-    MAX_WINDOW_TYPE,
-} pdaf_window_type_t;
 
 /* calibration method */
 typedef enum pdaf_calibration_version_t {
@@ -266,20 +240,6 @@ typedef struct{
   pdaf_af_window_t  af_float_window[MAX_FLOAT_WINDOW];
 }pdaf_float_window_configure_t;
 
-typedef enum {
-  PDAF_ROI_TYPE_CENTER = 0x0,  /* Default */
-  PDAF_ROI_TYPE_FACE,          /* Face priority AF */
-  PDAF_ROI_TYPE_TOUCH,         /* Touch-AF */
-  PDAF_ROI_TYPE_TOP_LEFT,      /* Peripheral TOP_LEFT ROI */
-  PDAF_ROI_TYPE_TOP_CENTER,    /* Peripheral TOP_CENTER ROI */
-  PDAF_ROI_TYPE_TOP_RIGHT,     /* Peripheral TOP_RIGHT ROI */
-  PDAF_ROI_TYPE_LEFT,          /* Peripheral LEFT ROI */
-  PDAF_ROI_TYPE_RIGHT,         /* Peripheral RIGHT ROI */
-  PDAF_ROI_TYPE_BOTTOM_LEFT,   /* Peripheral BOTTOM_LEFT ROI */
-  PDAF_ROI_TYPE_BOTTOM_CENTER, /* Peripheral BOTTOM_CENTER ROI */
-  PDAF_ROI_TYPE_BOTTOM_RIGHT,  /* Peripheral BOTTOM_RIGHT ROI */
-} pdaf_roi_type;
-
 /*fixed pdaf window configuration*/
 /*roi width and roi horizontal offset is defined
   as a percentage of image width*/
@@ -291,7 +251,6 @@ typedef struct{
   /*window number along vertical direction*/
   unsigned int     window_number_ver;
   pdaf_af_window_t af_fix_window;
-  pdaf_roi_type    roi_type;
 }pdaf_fixed_grid_window_configure_t;
 
 /*window configuration */
@@ -350,25 +309,17 @@ typedef struct
 
 typedef struct {
   unsigned char          *pd_stats;
-  float                   x_offset;   /* offset to PD area in full-size img */
-  float                   y_offset;
-  float                   width;
-  float                   height;
+  unsigned int            x_offset;   /* offset to PD area in full-size img */
+  unsigned int            y_offset;
   unsigned int            x_win_num;  /* PD area grid number */
   unsigned int            y_win_num;
   pdaf_lib_defocus_t      defocus[MAX_PDAF_WINDOW];
-  unsigned short          is_peripheral_valid;
-  pdaf_lib_defocus_t      peripheral[MAX_PERIPHERAL_WINDOW];
-  unsigned short          is_single_valid;
-  pdaf_lib_defocus_t      single[MAX_SINGLE_WINDOWS];
   unsigned int            status;
-  void                    *eeprom_data;
+  void                   *eeprom_data;
   int                     cur_res;
   float                   sensor_real_gain;
   int16_t                 cur_lens_pos;         /* in DAC */
   uint16_t                cur_logical_lens_pos;
-  uint32_t                num_of_valid_data_wrt_camif;
-  pdaf_processing_result_t stat_process_result;
 } pdaf_params_t;
 
 typedef struct {
@@ -637,12 +588,9 @@ typedef struct
 typedef struct
 {
     float               biasVectorStrength;     // [0, 1] where 0-> no bias, 1->dip SAD to 90% at center
-    float               temporalFilterStaticWeight;   // weight of previous frame SAD
-    float               temporalFilterDynamicWeight;
+    float               temporalFilterWeight;   // weight of previous frame SAD
     uint8_t             enableGridOverlap;
     uint8_t             confIntegralWidth;
-    uint8_t             numGridsExcludeVer;
-    uint8_t             numGridsExcludeHori;
 } PDLibTuningPostprocessing;
 
 typedef struct

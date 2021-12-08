@@ -10,16 +10,16 @@
 #include "chromatix.h"
 
 //=============================================================================
-//                      CONSTANTS
 //=============================================================================
-
-#define CHROMATIX_REVISION_SWPOSTPROC   1   // Must match chromatix_version_info.revision_number in header data file
+//=============================================================================
+//  SW Algorithms ( CAC2 + RNR1  )
+//=============================================================================
+//=============================================================================
+//=============================================================================
 
 #define MAX_HYSTERESIS_LIGHT_REGIONS    2   // Bright to Normal Light and Normal Light to Low Light Transitions
 #define RNR_LUT_SIZE                    164 // (Radius)/16-> for 4208x3120 , size is 164 = sqrt ( pow(2104,2)+pow(1560,2))
 #define MAX_SIGMA_TABLES                3
-
-#define EXT_SWPPROC_ENTRIES             3000
 
 typedef struct
 {
@@ -215,9 +215,6 @@ typedef struct
     //          SW HDR Info
     //=========================================================================
     chromatix_sw_hdr_type           chromatix_sw_hdr_data;
-
-    // 0x310 Updates
-    float                           ext_data[EXT_SWPPROC_ENTRIES];
 } chromatix_sw_postproc_type;
 
 #endif

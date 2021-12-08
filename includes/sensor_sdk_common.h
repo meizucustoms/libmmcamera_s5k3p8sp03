@@ -1,6 +1,6 @@
 /*==========================================================
 
-  Copyright (c) 2015-2017 Qualcomm Technologies, Inc.
+  Copyright (c) 2015-2016 Qualcomm Technologies, Inc.
   All Rights Reserved.
   Confidential and Proprietary - Qualcomm Technologies, Inc.
 
@@ -29,7 +29,6 @@ enum camera_i2c_reg_addr_type {
   CAMERA_I2C_BYTE_ADDR = 1,
   CAMERA_I2C_WORD_ADDR,
   CAMERA_I2C_3B_ADDR,
-  CAMERA_I2C_DWORD_ADDR,
   CAMERA_I2C_ADDR_TYPE_MAX,
 };
 
@@ -67,6 +66,7 @@ enum camera_gpio_type {
   CAMERA_GPIO_CUSTOM1,
   CAMERA_GPIO_CUSTOM2,
   CAMERA_GPIO_CUSTOM3,
+  CAMERA_GPIO_CUSTOM4,
   CAMERA_GPIO_MAX,
 };
 

@@ -9,21 +9,15 @@
 
 #include "chromatix.h"
 
-//=============================================================================
-//                      CONSTANTS
-//=============================================================================
-
-#define CHROMATIX_REVISION_3A       1       // Must match chromatix_version_info.revision_number in header data file
-
-//=============================================================================
-// DATA TYPES
-//=============================================================================
-
 typedef struct
 {
     unsigned short chromatix_version;
     unsigned short AAA_header_version;
 } AAA_version_type;
+
+//=============================================================================
+//                      CONSTANTS
+//=============================================================================
 
 // Generic package for 3 RGB float parameters
 typedef struct
@@ -1326,9 +1320,7 @@ typedef struct
     float   scene_change_low_threshold;
 } awb_dynamic_frame_skip_type;
 
-#define AWB_RESERVED_PARAM 1000
-#define AWB_RESERVED_INT_OFFSET 100
-#define AWB_RESERVED_FLOAT_OFFSET 300
+#define AWB_RESERVED_PARAM 200
 
 //Reserve values all set to 0
 typedef struct
@@ -1754,7 +1746,7 @@ typedef struct
     aec_idx_comp_type     idx_comp;                            // AEC index compensation
     aec_ev_table_type     aec_ev_table;                        // AEC EV compensation table
     aec_luma_weight_type  aec_luma_weight;                     // Color and sensor compensation for luma calculation
-    float                 reserved[500];                       // Reserved for temporary use
+    float                 reserved[50];                        // Reserved for temporary use
 } aec_generic_tuning_type;
 
 /**
@@ -2088,10 +2080,10 @@ typedef struct
 {
     float                    max_target_adjust_ratio;                 // Maximum target adjust allowed
     float                    min_target_adjust_ratio;                 // Minimum target adjust allowed
-    float                    sat_low_ref;                             // Low reference/control point for saturation
-    float                    sat_high_ref;                            // High reference/control point for saturation
-    float                    dark_low_ref;                            // Low reference/control point for darkness
-    float                    dark_high_ref;                           // High reference/control point for darkness
+    unsigned short           sat_low_ref;                             // Low reference/control point for saturation
+    unsigned short           sat_high_ref;                            // High reference/control point for saturation
+    unsigned short           dark_low_ref;                            // Low reference/control point for darkness
+    unsigned short           dark_high_ref;                           // High reference/control point for darkness
     aec_hist_pct_range_type  hist_sat_pushup_range[BAYER_CHNL_MAX];   // Percentage of bright pixels used in determine saturation
     aec_hist_pct_range_type  hist_sat_pushdown_range[BAYER_CHNL_MAX]; // Percentage of bright pixels used in determine saturation
     aec_hist_pct_range_type  hist_dark_range[BAYER_CHNL_MAX];         // Percentage of dark pixels used to determine darkness
@@ -2268,8 +2260,6 @@ typedef struct
     auto_hdr_detect_type        auto_hdr_detect;
 
     hazy_scene_detect_type      hazy_scene_detect;
-
-    float                       reserved[100];
 } AAA_ASD_struct_type;
 
 //=============================================================================
@@ -2306,9 +2296,6 @@ typedef struct
     float           band_range_max;            // to decide flicker or not, the peak width range max default: 1.12
     int             sad_thr;                   // frame to frame difference threshold default: 30
     int             sadr_thr;                  // first frame to current 5 frame difference threshold default: 30
-
-    // reserved
-    float           reserved[100];
 } chromatix_auto_flicker_detection_data_type;
 
 //=============================================================================
@@ -3866,210 +3853,14 @@ typedef struct _af_header_info
     af_cam_name     cam_name;
 } af_header_info_t;
 
-/*========================================================================
- * "af_tuning_monitor_t" is a tuning structure for AF Monitors :
- *   Support: four monitor algorithms: {CAF, PDAF, TOF, DCIAF}
- *   Each algo has its own topology.
- *   For each topology, specific value monitors (vm) are selected
- *   af_vm_sensitivity_level_t is a scalar for logical default sensitivity
- ========================================================================*/
-/****** Macros *****/
-typedef unsigned char af_vm_sensitivity_level_t;
-
-/******  Enum  *****/
-typedef enum
-{
-    VM_SET_TYPE_SADR                   = 0,
-    VM_SET_TYPE_SAD_PANNING,
-    VM_SET_TYPE_GYRO,
-    VM_SET_TYPE_GYRO_PANNING,
-    VM_SET_TYPE_DEFOCUS_LOW,
-    VM_SET_TYPE_DEFOCUS_HIGH,
-    VM_SET_TYPE_CONFIDENCE,
-    VM_SET_TYPE_CONFIDENCE_PANNING,
-    VM_SET_TYPE_DISTANCE,
-    VM_SET_TYPE_FV,
-    VM_SET_TYPE_SET10,
-    VM_SET_TYPE_SET11,
-    VM_SET_TYPE_SET12,
-    VM_SET_TYPE_SET13,
-    VM_SET_TYPE_SET14,
-    VM_SET_TYPE_SET15,
-    VM_SET_TYPE_SET16,
-    VM_SET_TYPE_SET17,
-    VM_SET_TYPE_SET18,
-    VM_SET_TYPE_SET19,
-    VM_SET_TYPE_SET20,
-    VM_SET_TYPE_SET21,
-    VM_SET_TYPE_SET22,
-    VM_SET_TYPE_SET23,
-    VM_SET_TYPE_SET24,
-    VM_SET_TYPE_SET25,
-    VM_SET_TYPE_SET26,
-    VM_SET_TYPE_SET27,
-    VM_SET_TYPE_SET28,
-    VM_SET_TYPE_SET29,
-    VM_SET_TYPE_SET30,
-    VM_SET_TYPE_SET31,
-    VM_SET_TYPE_SET32,
-    VM_SET_TYPE_SET33,
-    VM_SET_TYPE_SET34,
-    VM_SET_TYPE_SET35,
-    VM_SET_TYPE_MAX                    = 36,
-} af_vm_set_type_enum;
-
-typedef enum
-{
-    CAF_TOPO_PROFILE_SIMPLE            = 0,
-    CAF_TOPO_PROFILE_ADVANCED,
-    CAF_TOPO_PROFILE_MAX,
-} af_vm_topo_profile_caf_enum;
-
-typedef enum
-{
-    PDAF_TOPO_PROFILE_SPARSE           = 0,
-    PDAF_TOPO_PROFILE_2PD,
-    PDAF_TOPO_PROFILE_MAX,
-} af_vm_topo_profile_pdaf_enum;
-
-typedef enum
-{
-    TOF_TOPO_PROFILE_SIMPLE            = 0,
-    TOF_TOPO_PROFILE_MAX,
-} af_vm_topo_profile_tof_enum;
-
-typedef enum
-{
-    DCIAF_TOPO_PROFILE_SIMPLE          = 0,
-    DCIAF_TOPO_PROFILE_MAX,
-} af_vm_topo_profile_dciaf_enum;
-
-typedef enum
-{
-    VM_DETECTOR_STABLE = 0,
-    VM_DETECTOR_UNSTABLE,
-    VM_DETECTOR_MAX,
-} af_vm_detector_type_enum;
-
-/****** Struct *****/
-typedef struct _af_monitor_topo_caf_config_t
-{
-    af_vm_topo_profile_caf_enum        profile_index;
-    af_vm_sensitivity_level_t          sadr;
-    af_vm_sensitivity_level_t          gyro;
-    af_vm_sensitivity_level_t          gyro_panning;
-    af_vm_sensitivity_level_t          sad_panning;
-    af_vm_sensitivity_level_t          fv;
-    af_vm_sensitivity_level_t          reserved_sens[30];
-} af_monitor_topo_caf_config_t;
-
-typedef struct _af_monitor_topo_pdaf_config_t
-{
-    af_vm_topo_profile_pdaf_enum       profile_index;
-    af_vm_sensitivity_level_t          defocus_low;
-    af_vm_sensitivity_level_t          defocus_high;
-    af_vm_sensitivity_level_t          confidence_panning;
-    af_vm_sensitivity_level_t          reserved_sens[30];
-} af_monitor_topo_pdaf_config_t;
-
-typedef struct _af_monitor_topo_tof_config_t
-{
-    af_vm_topo_profile_tof_enum        profile_index;
-    af_vm_sensitivity_level_t          distance;
-    af_vm_sensitivity_level_t          confidence;
-    af_vm_sensitivity_level_t          reserved_sens[30];
-} af_monitor_topo_tof_config_t;
-
-typedef struct _af_monitor_topo_dciaf_config_t
-{
-    af_vm_topo_profile_dciaf_enum      profile_index;
-    af_vm_sensitivity_level_t          distance;
-    af_vm_sensitivity_level_t          confidence;
-    af_vm_sensitivity_level_t          reserved_sens[30];
-} af_monitor_topo_dciaf_config_t;
-
-typedef struct _af_monitor_algo_config_t
-{
-    af_monitor_topo_caf_config_t       topo_caf;
-    af_monitor_topo_pdaf_config_t      topo_pdaf;
-    af_monitor_topo_tof_config_t       topo_tof;
-    af_monitor_topo_dciaf_config_t     topo_dciaf;
-    float                              mixer_reserved[60];
-} af_monitor_algo_config_t;
-
-typedef struct _af_vm_fltr_median_config_t
-{
-    int                                enable;
-    int                                num_of_samples;
-} af_vm_fltr_median_config_t;
-
-typedef struct _af_vm_fltr_mvavg_config_t
-{
-    int                                enable;
-    int                                num_of_samples;
-} af_vm_fltr_mvavg_config_t;
-
-typedef struct _af_vm_fltr_iir_config_t
-{
-    int                                enable;
-    int                                num_of_samples;
-    float                              coeff_numerator;
-    float                              coeff_denominator;
-} af_vm_fltr_iir_config_t ;
-
-typedef struct _af_vm_sens_profile_t
-{
-    float                              trigger_threshold;
-    int                                consecutive_count_threshold;
-    int                                frame2armed;
-    af_vm_fltr_median_config_t         median_fltr_cfg;
-    af_vm_fltr_mvavg_config_t          mvavg_fltr_cfg;
-    af_vm_fltr_iir_config_t            iir_fltr_cfg;
-} af_vm_sens_profile_t;
-
-typedef struct _af_abs_mode_config_t
-{
-    int                                enable;
-    float                              baseline;
-} af_abs_mode_config_t;
-
-typedef struct _af_vm_config_t
-{
-    af_vm_detector_type_enum           detection_type;
-    af_abs_mode_config_t               absolute_mode_cfg;
-    af_vm_sens_profile_t               sens_profile_low;
-    af_vm_sens_profile_t               sens_profile_med;
-    af_vm_sens_profile_t               sens_profile_high;
-} af_vm_config_t;
-
-typedef struct _af_value_monitor_bank_config_t
-{
-    af_vm_config_t                     value_monitor[VM_SET_TYPE_MAX];
-    float                              reserved[60];
-} af_value_monitor_bank_config_t;
-
-typedef struct _af_tuning_monitor_t
-{
-    af_monitor_algo_config_t           monitor_algo_config;
-    af_value_monitor_bank_config_t     value_monitor_bank;
-    float                              reserved[100];
-} af_tuning_monitor_t;
-
-typedef struct _af_tuning_reserve_t
-{
-    int                                reserve_int[1500];
-    float                              reserve_float[1500];
-}af_tuning_reserve_t;
 
 typedef struct _af_algo_tune_parms
 {
-    af_header_info_t                   af_header_info;
-    af_tuning_algo_t                   af_algo;
-    af_tuning_sw_stats_t               af_swaf_config;
-    af_tuning_vfe_t                    af_vfe[MAX_AF_KERNEL_NUM];
-    af_tuning_baf_t                    af_baf;
-    af_tuning_monitor_t                af_monitor;
-    af_tuning_reserve_t                af_reserve;
+    af_header_info_t      af_header_info;
+    af_tuning_algo_t      af_algo;
+    af_tuning_sw_stats_t  af_swaf_config;
+    af_tuning_vfe_t       af_vfe[MAX_AF_KERNEL_NUM];
+    af_tuning_baf_t       af_baf;
 } af_algo_tune_parms_t;
 
 //=============================================================================
@@ -4336,8 +4127,6 @@ typedef struct
     unsigned long   reserve_2;
     unsigned long   reserve_3;
     unsigned long   reserve_4;
-    int             reserved_int[40];
-    float           reserved_float[40];
 } Chromatix_EIS_algo_type;
 
 typedef struct

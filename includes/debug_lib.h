@@ -1,5 +1,5 @@
 /*==========================================================
-  *Copyright (c) 2014-2018 Qualcomm Technologies, Inc.
+  *Copyright (c) 2014-2016 Qualcomm Technologies, Inc.
   *All Rights Reserved.
   *Confidential and Proprietary - Qualcomm Technologies, Inc.
 ===========================================================*/
@@ -91,9 +91,9 @@
       char prop[PROPERTY_VALUE_MAX];
       int i = 0;
       int global_debug_level, sensor_debug_level = SENSOR_DBG_ERR;
-      property_get("persist.vendor.camera.global.debug", prop, "0");
+      property_get("persist.camera.global.debug", prop, "0");
       global_debug_level = atoi(prop);
-      property_get("persist.vendor.camera.sensor.debug", prop, "0");
+      property_get("persist.camera.sensor.debug", prop, "0");
       sensor_debug_level = atoi(prop);
       for (i = 0; i < (int)S_ARRAYSIZE(g_map); i++) {
         if (global_debug_level == g_map[i].g_dbg_level) {

@@ -1,8 +1,8 @@
-/*
-* Copyright (c) 2012-2019 Qualcomm Technologies, Inc.
-* All Rights Reserved.
-* Confidential and Proprietary - Qualcomm Technologies, Inc.
-*/
+/* sensor_common.h
+ *
+ * Copyright (c) 2012-2016 Qualcomm Technologies, Inc. All Rights Reserved.
+ * Qualcomm Technologies Proprietary and Confidential.
+ */
 
 #ifndef __SENSOR_LIB_H_
 #define __SENSOR_LIB_H_
@@ -14,8 +14,7 @@
  * Sensor driver version is given by:
  * <Major version>.<Minor version>.<Patch version>
  */
-
-#define SENSOR_DRIVER_VERSION "2.15.0"
+#define SENSOR_DRIVER_VERSION "2.12.0"
 #define SENSOR_SDK_CAPABILITIES "Bayer,YUV and mono sensor,\
 short and long exposure-gain control, \
 short exposure control in direct or auto mode based on HDR type, \
@@ -69,8 +68,6 @@ RDI data packing, DPCM 6&8 modes, Quadra CFA"
 #define SENSOR_RAW_HDR_MODE (1 << 3)
 /* Quadra CFA 4 pixel mode */
 #define SENSOR_QUADRA_MODE (1 << 4)
-/* Quadra CFA 4 pixel in sensor mode */
-#define SENSOR_QUADRA_INSENSOR_MODE (1 << 5)
 /* Macro for using proper chromatix library. */
 #define SENSOR_LOAD_CHROMATIX(name, mode) \
   "libchromatix_" name "_" #mode ".so"
@@ -89,18 +86,14 @@ RDI data packing, DPCM 6&8 modes, Quadra CFA"
 #define MAX_SENSOR_DATA_TYPE 5
 #define MAX_SENSOR_EFFECT 3
 #define MAX_SENSOR_OPTICAL_BLACK_REGION 2
-#define MAX_VIDEO_HDR_FRAMES 3
 
 typedef unsigned long long sensor_capability_t;
 
 #define SENSOR_VIDEO_HDR_FLAG (((sensor_capability_t)1UL << 8) | 0)
-#define SENSOR_STAGGERED_VIDEO_HDR_FLAG ((sensor_capability_t)1ULL << 36)
 #define SENSOR_SNAPSHOT_HDR_FLAG (((sensor_capability_t)1UL << 15) | 0)
 #define SENSOR_AWB_UPDATE (((sensor_capability_t)1UL << 8) | 1)
 #define SENSOR_FEATURE_QUADRA_CFA ((sensor_capability_t)1ULL << 33)
-#define SENSOR_FEATURE_ZIGZAG_HDR ((sensor_capability_t)1ULL << 35)
-
-#define MAX_SENSOR_SETTING_I2C_REG 3000
+#define MAX_SENSOR_SETTING_I2C_REG 2048
 
 #ifndef FALSE
 #define FALSE 0
@@ -115,14 +108,6 @@ enum camsensor_mode {
   CAMSENSOR_MODE_3D =      (1 << 1),
   CAMSENSOR_MODE_INVALID = (1 << 2),
 };
-
-typedef enum {
-  SENSOR_ORIENTATION_NORMAL,      /* 0= No Horizontal Mirror or Vertical Flip */
-  SENSOR_ORIENTATION_MIRROR,      /* 1= Horizontal Mirror enabled */
-  SENSOR_ORIENTATION_FLIP,        /* 2= Vertical Flip enabled */
-  SENSOR_ORIENTATION_MIRROR_FLIP, /* 3=Horizontal Mirror and Vertical Flip enabled */
-  SENSOR_ORIENTATION_INVALID
-} sensor_orientation_type_t;
 
 typedef enum {
   SENSOR_DELAY_EXPOSURE,            /* delay for exposure*/
@@ -151,8 +136,6 @@ typedef enum {
   SENSOR_YCBCR,
   SENSOR_GREY,
   SENSOR_META,
-  SENSOR_BAYER_SVHDR,
-  SENSOR_BAYER_SVHDR_SUBFRAME
 } sensor_output_format_t;
 
 typedef enum {
@@ -228,33 +211,10 @@ typedef enum {
   SENSOR_HDR_MAX,
 } sensor_hdr_type_t;
 
-typedef enum {
-  SENSOR_ALT_SLAVE_SINGLE,
-  SENSOR_ALT_SLAVE_DUAL,
-  SENSOR_ALT_SLAVE_MAX,
-} alt_slave_mode_t;
-
-struct sensor_i2c_reg_setting_array {
-  struct camera_i2c_reg_array reg_setting_a[MAX_SENSOR_SETTING_I2C_REG];
-  unsigned short size;
-  enum camera_i2c_reg_addr_type addr_type;
-  enum camera_i2c_data_type data_type;
-  unsigned short delay;
-};
-
 struct sensor_id_info_t {
   unsigned short sensor_id_reg_addr;
   unsigned short sensor_id;
   unsigned short sensor_id_mask;
-  struct sensor_i2c_reg_setting_array settings;
-};
-
-struct camera_alt_slave_info {
-  unsigned short slave1_reg;
-  unsigned short slave2_reg;
-  unsigned short slave1_addr;
-  unsigned short slave2_addr;
-  alt_slave_mode_t alt_slave_mode;
 };
 
 struct camera_sensor_slave_info {
@@ -266,7 +226,6 @@ struct camera_sensor_slave_info {
   struct sensor_id_info_t sensor_id_info;
   struct camera_power_setting_array power_setting_array;
   unsigned char is_init_params_valid;
-  struct camera_alt_slave_info sensor_alt_slave_info;
 };
 
 struct sensor_test_mode_addr_t {
@@ -305,7 +264,6 @@ struct sensor_crop_parms_t {
 };
 
 typedef struct {
-  unsigned char is_depth_sensor;
   sensor_output_format_t output_format;
   sensor_connection_mode_t connection_mode;
   sensor_raw_output_t raw_output;
@@ -338,13 +296,8 @@ typedef struct {
   float min_digital_gain;
   float max_digital_gain;
   int dig_gain_decimator;
-  unsigned int min_linecount;
   unsigned int max_linecount;
   analaog_gain_map_coeff smia_type_gain_coeff;
-  unsigned int svhdr_use_separate_gain;
-  unsigned short svhdr_use_separate_limits;
-  uint32_t min_line_cnt[MAX_VIDEO_HDR_FRAMES];
-  uint32_t max_line_cnt[MAX_VIDEO_HDR_FRAMES];
 } sensor_aec_data_t;
 
 typedef struct {
@@ -387,24 +340,6 @@ typedef struct {
   unsigned short b_pedestal;
 } sensor_color_level_info;
 
-/* sensor_custom_format_t: Describe sensor custom output
- *
- * enable: set if sensor output is custom format
- * subframes_cnt: number of interleaved frames
- * start_x: start x of active area
- * start_y: start y of active area
- * width: sensor output width (extra data included)
- * height: sensor output height (extra data included)
- */
-typedef struct {
-  unsigned short enable;
-  unsigned int subframes_cnt;
-  unsigned int start_x;
-  unsigned int start_y;
-  unsigned int width;
-  unsigned int height;
-} sensor_custom_format_t;
-
 /* sensor_lib_out_info_t: store information about different resolution
  * supported by sensor
  *
@@ -419,12 +354,7 @@ typedef struct {
  * min_fps: minumim fps that can be supported for this resolution
  * max_fps: maximum fps that can be supported for this sensor
  * mode: mode / modes for which this resolution can be used
- *       SENSOR_DEFAULT_MODE / SENSOR_HFR_MODE
- * min_hbi: minimum available horizontal blanking (pixels)
- *          based on op_pixel_clk
- * min_vbi: minimum available vertical blanking (lines)
- *          based on op_pixel_clk
- */
+ *       SENSOR_DEFAULT_MODE / SENSOR_HFR_MODE*/
 struct sensor_lib_out_info_t {
   unsigned short x_output;
   unsigned short y_output;
@@ -441,10 +371,6 @@ struct sensor_lib_out_info_t {
   unsigned int offset_y;
   float    scale_factor;
   unsigned int is_pdaf_supported;
-  unsigned short min_hbi;
-  unsigned short min_vbi;
-  sensor_custom_format_t custom_format;
-  uint64_t data_rate;
 };
 
 typedef struct {
@@ -475,6 +401,14 @@ struct camera_i2c_reg_setting {
   unsigned short delay;
 };
 
+struct sensor_i2c_reg_setting_array {
+  struct camera_i2c_reg_array reg_setting_a[MAX_SENSOR_SETTING_I2C_REG];
+  unsigned short size;
+  enum camera_i2c_reg_addr_type addr_type;
+  enum camera_i2c_data_type data_type;
+  unsigned short delay;
+};
+
 struct sensor_lib_reg_settings_array {
   struct sensor_i2c_reg_setting_array reg_settings[MAX_RESOLUTION_MODES];
   unsigned int                          size;
@@ -484,14 +418,11 @@ struct sensor_csi_params {
   unsigned char  lane_cnt;
   unsigned char  settle_cnt;
   unsigned char  is_csi_3phase;
-  unsigned char  is_secure;
 };
 
 typedef enum sensor_stats_types {
   HDR_STATS,
   PD_STATS,
-  STAGGERED_HDR_FRAME,
-  FLICKER_STATS,
 } sensor_stats_type_t;
 
 struct sensor_csid_vc_cfg {
@@ -530,15 +461,9 @@ typedef struct {
   unsigned int line_count;
   unsigned int sensor_digital_gain;
   unsigned int s_reg_gain;
-  unsigned int m_reg_gain;
   float        sensor_real_gain;
   float        sensor_real_dig_gain;
   float        digital_gain;
-
-  unsigned int s_dig_reg_gain;
-  unsigned int m_dig_reg_gain;
-  float        sensor_real_s_dig_gain;
-  float        sensor_real_m_dig_gain;
 } sensor_exposure_info_t;
 
 typedef struct _sensor_stream_info_t {
@@ -576,7 +501,6 @@ struct sensor_meta_data_out_info_t {
   unsigned int height;
   sensor_stats_type_t stats_type;
   unsigned char  dt;
-  unsigned char  cid;
 };
 
 struct sensor_lib_meta_data_info_array {
@@ -647,9 +571,6 @@ typedef struct {
   int (*sensor_calculate_exposure) (float, unsigned int,
     sensor_exposure_info_t *, float);
 
-  int (*sensor_calculate_3exp_HDR_exposure) (float, unsigned int,
-    sensor_exposure_info_t *, float, float);
-
   /** Function to create register table from exposure settings
    * input param1 - register gain value
    * input param2 - digital gain value
@@ -663,32 +584,6 @@ typedef struct {
   int (*sensor_fill_exposure_array)(unsigned int, unsigned int, unsigned int,
       unsigned int, int, unsigned int, struct camera_i2c_reg_setting *,
       unsigned int, int, int);
-
-  int (*sensor_fill_exposure_array_with_res)(unsigned int, unsigned int, unsigned int,
-      unsigned int, int, unsigned int, struct camera_i2c_reg_setting *,
-      unsigned int, int, int, int);
-
-   /** Function to create register table from exposure value
-   * input param1 - exposure value
-   * input param2 - register settings
-   * return value - 0 for success and negative value for
-   * failure **/
-  int (*sensor_fill_exp_array_from_value)(int64_t exposure,
-       struct camera_i2c_reg_setting* reg_setting, uint32_t* new_linecount,
-       uint16_t* new_fl_lines);
-
-   /** Function to calculate exposure start time
-   * input param1 - sof time stamp
-   * input param2 - exposure time
-   * input param3 - current resolution
-   * return value - 0 for success and negative value for
-   * failure **/
-  int64_t (*sensor_calculate_exposure_start_time)(int64_t sof_timestamp,
-    int64_t exposure_time, int cur_res);
-
-  int (*sensor_fill_3exp_HDR_exposure_array)(unsigned int, unsigned int, unsigned int,
-      unsigned int, int, unsigned int, struct camera_i2c_reg_setting *,
-      unsigned int, unsigned int, int, unsigned int, unsigned int, int, int);
 } sensor_exposure_table_t;
 
 typedef struct {
@@ -700,15 +595,6 @@ typedef struct {
   unsigned short awb_table_size;
 } sensor_awb_table_t;
 
-typedef struct {
-  /** Function to create register table from FPS settings
-  * input param1 - required FPS value
-  * input param2 - register settings
-  * return value - 0 for success and negative value for
-  * failure **/
-  int (*sensor_fill_fps_array)(float, struct camera_i2c_reg_setting *);
-} sensor_fps_table_t;
-
 typedef enum {
   SENSOR_STATS_CUSTOM = 0,
   SENSOR_STATS_RAW10_8B_CONF_10B_PD, /*8 bits confidence, 10 bits PD*/
@@ -718,15 +604,11 @@ typedef enum {
 typedef struct {
   int (*parse_VHDR_stats)(unsigned int *, void *);
   int (*parse_PDAF_stats)(unsigned int *, void *);
-  int (*parse_flicker_stats)(unsigned int *, void *);
   sensor_stats_format_t pd_data_format;
 } sensor_RDI_parser_stats_t;
 
 static int sensor_calculate_exposure(float real_gain,
   unsigned int line_count, sensor_exposure_info_t *exp_info, float s_real_gain);
-
-static int sensor_calculate_3exp_HDR_exposure(float real_gain,
-  unsigned int line_count, sensor_exposure_info_t *exp_info, float s_real_gain, float m_real_gain);
 
 static int sensor_fill_exposure_array(unsigned int gain,
    unsigned int digital_gain, unsigned int line,
@@ -734,33 +616,13 @@ static int sensor_fill_exposure_array(unsigned int gain,
   struct camera_i2c_reg_setting* reg_setting,
   unsigned int s_reg_gain, int s_linecount, int is_hdr_enabled);
 
-static int sensor_fill_3exp_HDR_exposure_array(unsigned int gain,
-   unsigned int digital_gain, unsigned int line,
-  unsigned int fl_lines, int luma_avg, unsigned int hdr_param,
-  struct camera_i2c_reg_setting* reg_setting,
-  unsigned int s_reg_gain, unsigned int s_dig_reg_gain, int s_linecount, unsigned int m_reg_gain, unsigned int m_dig_reg_gain, int m_linecount, int is_hdr_enabled);
-
-
 static int sensor_fill_awb_array(unsigned short awb_gain_r,
   unsigned short awb_gain_b,  struct camera_i2c_seq_reg_setting* reg_setting);
-
-static int sensor_fill_fps_array(float fps,
-  struct camera_i2c_reg_setting* reg_setting);
-
-static int sensor_fill_exp_array_from_value(int64_t exposure,
-  struct camera_i2c_reg_setting* reg_setting, uint32_t* new_linecount,
-  uint16_t* new_fl_lines);
-
-static int64_t sensor_calculate_exposure_start_time(
-  int64_t sof_timestamp, int64_t exposure_time, int cur_res);
 
 static int parse_VHDR_stats(unsigned int *destLumaBuff,
   void *rawBuff);
 
 static int parse_PDAF_stats(unsigned int *destLumaBuff,
-  void *rawBuff);
-
-static int parse_flicker_stats(unsigned int *destLumaBuff,
   void *rawBuff);
 
 typedef struct {
@@ -820,8 +682,7 @@ typedef struct {
   struct camera_i2c_reg_setting_array embedded_data_disable_settings;
   struct camera_i2c_reg_setting_array aec_enable_settings;
   struct camera_i2c_reg_setting_array aec_disable_settings;
-  struct camera_i2c_reg_setting_array dualcam_master_settings;
-  struct camera_i2c_reg_setting_array dualcam_slave_settings;
+  struct camera_i2c_reg_setting_array dualcam_settings;
 
   /* sensor test pattern info */
   sensor_test_info test_pattern_info;
@@ -852,9 +713,6 @@ typedef struct {
   /* sensor_awb_table_t */
   sensor_awb_table_t awb_func_table;
 
-    /* sensor_awb_table_t */
-  sensor_fps_table_t fps_func_table;
-
   /* Parse RDI stats callback function */
   sensor_RDI_parser_stats_t parse_RDI_stats;
 
@@ -880,10 +738,116 @@ typedef struct {
   sensorlib_pdaf_apis_t sensorlib_pdaf_api;
 
   pdaf_lib_t            pdaf_config;
-
-  /* sensor orientation flag */
-  sensor_orientation_type_t  sensor_orientation;
-
 } sensor_lib_t;
+
+typedef struct {
+  /* sensor slave info */
+  struct camera_sensor_slave_info sensor_slave_info;
+
+  /* sensor output settings */
+  sensor_output_t sensor_output;
+
+  /* sensor output register address */
+  struct sensor_output_reg_addr_t output_reg_addr;
+
+  /* sensor exposure gain register address */
+  struct sensor_exp_gain_info_t exp_gain_info;
+
+  /* sensor aec info */
+  sensor_aec_data_t aec_info;
+
+  /* number of frames to skip after start stream info */
+  unsigned short sensor_num_frame_skip;
+
+  /* number of frames to skip after start HDR stream info */
+  unsigned short sensor_num_HDR_frame_skip;
+
+  /* sensor pipeline delay */
+  unsigned int sensor_max_pipeline_frame_delay;
+
+  /* sensor lens info */
+  sensor_property_t sensor_property;
+
+  /* imaging pixel array size info */
+  sensor_imaging_pixel_array_size pixel_array_size_info;
+
+  /* Sensor color level information */
+  sensor_color_level_info color_level_info;
+
+  /* sensor port info that consists of cid mask and fourcc mapaping */
+  sensor_stream_info_array_t sensor_stream_info_array;
+
+  /* Sensor Settings */
+  struct camera_i2c_reg_setting_array start_settings;
+  struct camera_i2c_reg_setting_array stop_settings;
+  struct camera_i2c_reg_setting_array groupon_settings;
+  struct camera_i2c_reg_setting_array groupoff_settings;
+  struct camera_i2c_reg_setting_array embedded_data_enable_settings;
+  struct camera_i2c_reg_setting_array embedded_data_disable_settings;
+  struct camera_i2c_reg_setting_array aec_enable_settings;
+  struct camera_i2c_reg_setting_array aec_disable_settings;
+  struct camera_i2c_reg_setting_array dualcam_settings;
+
+  /* sensor test pattern info */
+  sensor_test_info test_pattern_info;
+  /* sensor effects info */
+  struct sensor_effect_info effect_info;
+
+  /* Sensor Settings Array */
+  struct sensor_lib_reg_settings_array init_settings_array;
+  struct sensor_lib_reg_settings_array res_settings_array;
+
+  /* ArcSoft? */
+  unsigned char meizu_reserved1[10616];
+
+  struct sensor_lib_out_info_array     out_info_array;
+  struct sensor_csi_params             csi_params;
+  struct sensor_csid_lut_params_array  csid_lut_params_array;
+  struct sensor_lib_crop_params_array  crop_params_array;
+
+  /* Exposure Info */
+  sensor_exposure_table_t exposure_func_table;
+
+  /* video_hdr mode info*/
+  struct sensor_lib_meta_data_info_array meta_data_out_info_array;
+
+  /* sensor optical black regions */
+  sensor_optical_black_region_t optical_black_region_info;
+
+  /* sensor_capability */
+  sensor_capability_t sensor_capability;
+
+  /* sensor_awb_table_t */
+  sensor_awb_table_t awb_func_table;
+
+  /* Parse RDI stats callback function */
+  sensor_RDI_parser_stats_t parse_RDI_stats;
+
+  unsigned char meizu_data[20];
+
+  /* analog-digital conversion time */
+  long long adc_readout_time;
+
+  /* number of frames to skip for fast AEC use case */
+  unsigned short sensor_num_fast_aec_frame_skip;
+
+  /* add soft delay for sensor settings like exposure, gain ...*/
+  unsigned char app_delay[SENSOR_DELAY_MAX];
+
+  unsigned char meizu_reserved2[4];
+
+  /* for noise profile calculation
+     Tuning team must update with proper values. */
+  struct sensor_noise_coefficient_t noise_coeff;
+
+  /* Flag to be set if any external library are to be loaded */
+  unsigned char external_library;
+
+  unsigned char meizu_reversed3[1];
+
+  sensorlib_pdaf_apis_t sensorlib_pdaf_api;
+
+  pdaf_lib_t            pdaf_config;
+} mz_samsung_sensor_lib_t;
 
 #endif /* __SENSOR_LIB_H_ */

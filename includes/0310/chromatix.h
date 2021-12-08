@@ -11,9 +11,7 @@
 //                      CONSTANTS
 //=============================================================================
 
-#define CHROMATIX_VERSION           0x310   // Must match chromatix_version_info.chromatix_version in header data file
-
-#define CHROMATIX_REVISION_DEFAULT  1       // Must match chromatix_version_info.revision_number in header data file
+#define CHROMATIX_VERSION 0x310
 
 //0x303
 #define MAX_LIGHT_TYPES_FOR_SPATIAL 6   //this is used for ABF3, WNR, 9x9ASF we use 6 sets of triggers
@@ -23,7 +21,7 @@
 #define MAX_SETS_FOR_ADRC_LUX_ADJ   3
 #define MAX_SETS_FOR_GTM_EXP_ADJ    3
 
-#define EXT_DEFAULT_ENTRIES         2340
+
 //=============================================================================
 // DATA TYPES
 //=============================================================================
@@ -475,7 +473,7 @@ typedef struct
 // Effect: Enable cross-channel processing for Gr/GB channels
 //
 // Variable name: distance_ker[2][3].
-// Pixel distance from center to calculate bilateral filter coefficients, distance_ker[0][] - R/B, distance_ker[1][] - Gr/Gb
+// Pixel distance from center to calculate bilateral filter coefficients, distance_ker[0][] - Gr/Gb, distance_ker[1][] - R/B.
 // Default value: {3, 2, 1, 3, 2, 1}.
 // Data range: [][0] – center pixel, range 1-4; [][1] – near surrounding pixels, range 0-2; [][2] – far surrounding pixels, range 0-1
 // Effect: :
@@ -2477,9 +2475,6 @@ typedef struct
     // post processing modules
     //=========================================================================
     chromatix_post_processing_type  chromatix_post_processing;
-
-    // 0x310 Updates
-    float                           ext_data[EXT_DEFAULT_ENTRIES];
 } chromatix_parms_type;
 
 #endif
