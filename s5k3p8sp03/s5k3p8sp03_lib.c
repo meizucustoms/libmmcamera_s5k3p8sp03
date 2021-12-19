@@ -38,11 +38,11 @@ static float s5k3p8sp03_register_to_real_gain(uint32_t reg_gain)
 {
   float real_gain;
 
-  if (reg_gain > 512){
+  if (reg_gain > 512) { // >> 9)
     reg_gain = 512;
   }
 
-  real_gain = (float)reg_gain / 32.0;
+  real_gain = (float)reg_gain / 32.0; // * 0.03125;
 
   return real_gain;
 }
@@ -52,14 +52,13 @@ static uint32_t s5k3p8sp03_digital_gain_calc(float real_gain, float sensor_real_
   uint32_t reg_dig_gain = s5k3p8sp03_MIN_DGAIN_REG_VAL;
   float real_dig_gain = s5k3p8sp03_MIN_DGAIN;
 
-  if(real_gain > 16.0){
+  if (real_gain > 16.0){
     real_dig_gain = real_gain / sensor_real_gain;
-  }
-  else {
+  } else {
     real_dig_gain = s5k3p8sp03_MIN_DGAIN;
   }
 
-  if(real_dig_gain > s5k3p8sp03_MAX_DGAIN) {
+  if (real_dig_gain > s5k3p8sp03_MAX_DGAIN) {
     real_dig_gain = s5k3p8sp03_MAX_DGAIN;
   }
   reg_dig_gain = (uint32_t)(real_dig_gain * 256);
@@ -83,7 +82,7 @@ int32_t s5k3p8sp03_calculate_exposure(float real_gain,
   exp_info->sensor_digital_gain =
     s5k3p8sp03_digital_gain_calc(real_gain, exp_info->sensor_real_gain);
   exp_info->sensor_real_dig_gain = exp_info->sensor_digital_gain / 256;
-  exp_info->digital_gain = real_gain/
+  exp_info->digital_gain = real_gain /
     (exp_info->sensor_real_gain * exp_info->sensor_real_dig_gain);
   exp_info->line_count = line_count;
 

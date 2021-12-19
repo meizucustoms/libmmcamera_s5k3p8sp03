@@ -823,7 +823,8 @@ typedef struct {
   /* Parse RDI stats callback function */
   sensor_RDI_parser_stats_t parse_RDI_stats;
 
-  unsigned char meizu_data[20];
+  /* full size info */
+  sensor_rolloff_config rolloff_config;
 
   /* analog-digital conversion time */
   long long adc_readout_time;
@@ -842,8 +843,6 @@ typedef struct {
 
   /* Flag to be set if any external library are to be loaded */
   unsigned char external_library;
-
-  unsigned char meizu_reversed3[1];
 
   sensorlib_pdaf_apis_t sensorlib_pdaf_api;
 

@@ -378,8 +378,8 @@ static mz_samsung_sensor_lib_t sensor_lib_ptr =
   {
     .active_array_size =
     {
-      .width = 4608,
-      .height = 3456,
+      .width = 2304,
+      .height = 1728,
     },
     .left_dummy = 8,
     .right_dummy = 8,
@@ -678,12 +678,9 @@ static mz_samsung_sensor_lib_t sensor_lib_ptr =
     .sensor_fill_exposure_array = s5k3p8sp03_fill_exposure_array,
   },
   .sensor_capability = SENSOR_FEATURE_QUADRA_CFA,
-  // I am too lazy to reverse that
-  .meizu_data = {
-    0x25, 0x13, 0x1, 0x0, 0x1, 0x0,
-  },
   .adc_readout_time = 0,
   .sensor_num_fast_aec_frame_skip = 0,
+  //13 25 00 01 00 01
   .noise_coeff = {
     .gradient_S = 3.738032e-06,
     .offset_S = 3.651935e-04,
